@@ -1,7 +1,7 @@
 # Edge TTS Text-to-Speech Converter
 
 ## Overview
-Edge TTS Text-to-Speech Converter is a Python application that leverages Microsoft Edge TTS for converting text to speech. It features a user-friendly Gradio interface and supports both single and multi-speaker modes, subtitle generation (.srt), and file uploads for text input (TXT or SRT formats). Key functionalities include smart format detection for plain text or SRT subtitle files, and the ability to adjust speech rate and pitch for customized audio output.
+Edge TTS Text-to-Speech Converter is a Python application that leverages Microsoft Edge TTS for converting text to speech. It features a user-friendly Gradio interface and supports both single and multi-speaker modes, subtitle generation (.srt), and file uploads for text input (TXT, SRT, PDF, or DOCX formats). Key functionalities include smart format detection for plain text or SRT subtitle files, and the ability to adjust speech rate and pitch for customized audio output.
 
 ## Installation
 
@@ -53,7 +53,7 @@ To install Edge TTS Text-to-Speech Converter using Conda, follow these steps:
 - **Single & Multi-Speaker Support**: Choose between single speaker or multi-speaker modes for different voice outputs.
 - **SRT Subtitle Support**: Upload SRT files or input SRT format text to generate perfectly synchronized speech.
 - **SRT Generation**: Create subtitle files alongside your audio for perfect timing.
-- **File Upload**: Easily upload TXT or SRT files for conversion.
+- **File Upload**: Easily upload TXT, SRT, PDF, or DOCX files for conversion.
 - **Smart Format Detection**: Automatically detects plain text or SRT subtitle format for seamless processing.
 
 ## Usage

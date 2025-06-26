@@ -7,6 +7,8 @@ import json
 import datetime
 import re
 import io
+from docx import Document
+from pypdf import PdfReader
 
 
 async def get_voices():
@@ -88,27 +90,37 @@ async def process_uploaded_file(file):
     """Process uploaded file and detect if it's SRT or plain text"""
     if file is None:
         return None, None, False, None
-    
+
     try:
-        file_path = file.name if hasattr(file, 'name') else file
+        file_path = file.name
         file_extension = os.path.splitext(file_path)[1].lower()
+        content = ""
         
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Check if it's an SRT file
+        if file_extension == ".pdf":
+            reader = PdfReader(file_path)
+            for page in reader.pages:
+                content += page.extract_text()
+        elif file_extension == ".docx":
+            doc = Document(file_path)
+            for para in doc.paragraphs:
+                content += para.text + "\n"
+        else:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
         is_subtitle = False
         timing_data = None
-        
-        if file_extension == '.srt' or re.search(r'^\d+\s*\n\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3}', content, re.MULTILINE):
+        if file_extension == ".srt" or re.search(
+            r"^\d+\s*\n\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3}",
+            content,
+            re.MULTILINE,
+        ):
             is_subtitle = True
             text_content, timing_data = parse_srt_content(content)
-            # Return original content for display
             return text_content, timing_data, is_subtitle, content
         else:
-            # Treat as plain text
             text_content = content
-        
+
         return text_content, timing_data, is_subtitle, content
     except Exception as e:
         return f"Error processing file: {str(e)}", None, False, None
@@ -536,7 +548,7 @@ async def create_demo():
     - **Single & Multi-Speaker Support**: Choose between single speaker or multi-speaker modes
     - **SRT Subtitle Support**: Upload SRT files or input SRT format text to generate perfectly synchronized speech
     - **SRT Generation**: Create subtitle files alongside your audio for perfect timing
-    - **File Upload**: Easily upload TXT or SRT files for conversion
+    - **File Upload**: Easily upload TXT, SRT, PDF, or DOCX files for conversion
     - **Smart Format Detection**: Automatically detects plain text or SRT subtitle format
     """
 
@@ -550,7 +562,7 @@ async def create_demo():
                 with gr.Row():
                     with gr.Column(scale=3):
                         text_input = gr.Textbox(label="Input Text", lines=5, value="Hello, how are you doing!")
-                        file_input = gr.File(label="Or upload a TXT/SRT file", file_types=[".txt", ".srt"])
+                        file_input = gr.File(label="Or upload a PDF/DOCX/TXT/SRT file", file_types=[".txt", ".srt", ".pdf", ".docx"])
                     with gr.Column(scale=2):
                         voice_dropdown = gr.Dropdown(
                             choices=[""] + list(voices.keys()),
@@ -703,4 +715,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-                                        

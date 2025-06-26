@@ -1,2 +1,4 @@
 edge_tts==6.1.12
 gradio==5.24.0
+pypdf
+python-docx
