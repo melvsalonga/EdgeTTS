@@ -13,9 +13,24 @@ from pypdf import PdfReader
 
 async def get_voices():
     voices = await edge_tts.list_voices()
+    
+    # Custom sort key function
+    def sort_key(voice):
+        locale = voice['Locale']
+        if locale.startswith('en-US'):
+            return (0, locale)  # Highest priority for US English
+        elif locale.startswith('en-'):
+            return (1, locale)  # Next priority for other English variants
+        else:
+            return (2, locale)  # All other languages
+            
+    # Sort the voices
+    sorted_voices = sorted(voices, key=sort_key)
+    
+    # Create the dictionary for the dropdown
     return {
         f"{v['ShortName']} - {v['Locale']} ({v['Gender']})": v["ShortName"]
-        for v in voices
+        for v in sorted_voices
     }
 
 
